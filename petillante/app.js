@@ -374,10 +374,11 @@
         try { await navigator.share({ files: [file], title: permit.titre }); return; }
         catch (e) { if (e.name === "AbortError") return; }
       }
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob); a.download = file.name; a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      toast("Permis enregistré. À encadrer d'urgence.");
+      // Pas de partage de fichier : on montre l'image, appui long pour l'enregistrer.
+      const d = $("#permit-view"), url = URL.createObjectURL(blob);
+      const old = $("#permit-img").src; if (old.startsWith("blob:")) URL.revokeObjectURL(old);
+      $("#permit-img").src = url; $("#permit-dl").href = url;
+      d.showModal();
     } finally { btn.disabled = false; }
   }
 
@@ -476,8 +477,16 @@
     $("#set-name").oninput = e => { store.set("name", e.target.value.trim()); renderHello(); if (permit) $("#permit-name").textContent = name() || "toi-même, évidemment"; };
     $$('#settings input[name="size"]').forEach(r => r.onchange = () => { store.set("scale", +r.value); applyPrefs(); });
     $$('#settings input[name="theme"]').forEach(r => r.onchange = () => { store.set("theme", r.value); applyPrefs(); });
-    $("#reset").onclick = () => {
-      if (!confirm("Tout effacer ? Ton prénom, ton bocal et tes phrases gardées disparaîtront de cet appareil.")) return;
+    // confirmation dans la page : un second appui dans les 4 secondes
+    let resetArmed = 0;
+    $("#reset").onclick = e => {
+      const b = e.currentTarget;
+      if (Date.now() - resetArmed > 4000) {
+        resetArmed = Date.now();
+        b.textContent = "Sûre ? Appuie encore pour tout effacer";
+        setTimeout(() => { if (Date.now() - resetArmed >= 4000) b.textContent = "Tout effacer et recommencer"; }, 4100);
+        return;
+      }
       store.clear(); location.hash = ""; location.reload();
     };
 

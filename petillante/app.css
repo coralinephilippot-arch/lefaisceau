@@ -421,6 +421,9 @@ input:focus-visible { outline-offset: 2px; }
 .sheet input + .label, .sheet input + .seg { margin-top: 22px; }
 .privacy-note { font-size: .86rem; color: var(--ink-soft); margin: 12px 0 6px; padding-left: 26px; position: relative; }
 .privacy-note::before { content: "🔒"; position: absolute; left: 0; }
+.permit-img { display: block; width: 100%; border-radius: 16px; box-shadow: var(--shadow); }
+.pv-hint { margin: 14px 0 16px; font-size: .92rem; }
+#permit-dl { text-decoration: none; }
 .onboarding { border-top: 10px solid var(--coral); }
 
 .seg { border: 0; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }

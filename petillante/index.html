@@ -271,6 +271,19 @@
   </form>
 </dialog>
 
+<!-- Aperçu du permis (quand le partage de fichier n'est pas disponible) -->
+<dialog class="sheet" id="permit-view" aria-labelledby="pv-title">
+  <form method="dialog">
+    <div class="sheet-head">
+      <h2 class="sheet-title" id="pv-title">Ton permis</h2>
+      <button class="icon-btn" value="close" aria-label="Fermer"><svg width="22" height="22"><use href="#i-x"/></svg></button>
+    </div>
+    <img class="permit-img" id="permit-img" alt="Ton permis officiel, tamponné">
+    <p class="sheet-text pv-hint">Sur téléphone, appuie longuement sur l'image pour l'enregistrer dans tes photos.</p>
+    <a class="btn btn--coral btn--wide" id="permit-dl" download="permis-petillante.png"><svg width="20" height="20" aria-hidden="true"><use href="#i-download"/></svg>Télécharger l'image</a>
+  </form>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
 
