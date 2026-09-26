@@ -62,7 +62,7 @@ body {
   background: var(--paper); color: var(--ink);
   font-family: var(--text); font-weight: 400; line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 28px);
+  padding-bottom: calc(var(--tabbar-h) + var(--safe-area-inset-bottom, env(safe-area-inset-bottom)) + 28px);
   overflow-x: hidden;
 }
 /* grain papier */
@@ -85,7 +85,7 @@ em { font-style: italic; }
 .topbar {
   position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; justify-content: space-between;
-  padding: calc(env(safe-area-inset-top) + 12px) 20px 12px;
+  padding: calc(var(--safe-area-inset-top, env(safe-area-inset-top)) + 12px) 20px 12px;
   max-width: 640px; margin: 0 auto;
   background: linear-gradient(var(--paper) 70%, transparent);
 }
@@ -208,7 +208,8 @@ main { max-width: 640px; margin: 0 auto; padding: 4px 20px 0; outline: none; }
 @keyframes spin { to { transform: rotate(372deg); } }
 
 /* ——— Météo ——— */
-.meteo-pills { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.meteo-pills { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 359px) { .meteo-pills { gap: 5px; } .meteo-pill { font-size: .62rem; padding-inline: 2px; } .meteo-pill svg { width: 30px; height: 30px; } .dose .row { gap: 6px; } .dose .btn { padding: 0 16px; } }
 .meteo-pill {
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   padding: 14px 4px 12px; border-radius: var(--r-md); border: 0;
@@ -329,8 +330,9 @@ input:focus-visible { outline-offset: 2px; }
 @keyframes stamp { 0% { opacity: 0; transform: rotate(-16deg) scale(2.4); } 100% { opacity: .92; transform: rotate(-16deg) scale(1); } }
 .permit.is-thud { animation: thud .35s .38s var(--ease-out); }
 @keyframes thud { 30% { transform: scale(.985) translateY(3px); } }
-.permit-actions { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; }
-.permit-actions .btn { padding: 0 14px; }
+.permit-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 8px; }
+.permit-actions .btn { padding: 0 12px; min-width: 0; }
+@media (max-width: 400px) { .permit-actions .btn svg { display: none; } }
 .custom-permit { margin-top: 26px; border-top: 1.5px solid var(--line); padding-top: 8px; }
 .custom-permit summary { cursor: pointer; list-style: none; padding: 14px 0; font-weight: 600; display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
 .custom-permit summary::-webkit-details-marker { display: none; }
@@ -383,7 +385,7 @@ input:focus-visible { outline-offset: 2px; }
 
 /* ——— Barre d'onglets ——— */
 .tabbar {
-  position: fixed; z-index: 40; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 12px); transform: translateX(-50%);
+  position: fixed; z-index: 40; left: 50%; bottom: calc(var(--safe-area-inset-bottom, env(safe-area-inset-bottom)) + 12px); transform: translateX(-50%);
   width: min(calc(100% - 24px), 520px); height: var(--tabbar-h);
   display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px;
   background: #22162E; border-radius: 28px; box-shadow: 0 20px 40px -18px rgba(34,22,46,.6);
@@ -440,7 +442,7 @@ input:focus-visible { outline-offset: 2px; }
 
 /* ——— Toast & confettis ——— */
 .toast {
-  position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 26px); z-index: 60;
+  position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + var(--safe-area-inset-bottom, env(safe-area-inset-bottom)) + 26px); z-index: 60;
   transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
   background: #22162E; color: #F7F0E6; padding: 13px 20px; border-radius: var(--r-pill); font-weight: 500; font-size: .95rem;
   width: max-content; max-width: min(340px, calc(100% - 40px)); text-align: center; border-radius: 22px; box-shadow: 0 12px 30px -10px rgba(0,0,0,.4);

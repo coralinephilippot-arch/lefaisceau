@@ -31,7 +31,15 @@
   const fmtLong = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" });
   const fmtShort = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" });
   const name = () => (store.get("name", "") || "").trim();
-  const vibrate = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch {} };
+  /* Dans l'app iOS/Android (Capacitor), on passe par les plugins natifs. */
+  const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  const plugin = n => (NATIVE && window.Capacitor.Plugins && window.Capacitor.Plugins[n]) || null;
+  const PUBLIC_URL = "https://lefaisceau.org/petillante/";
+  const vibrate = ms => {
+    const h = plugin("Haptics");
+    if (h) { h.impact({ style: (Array.isArray(ms) || ms >= 30) ? "MEDIUM" : "LIGHT" }).catch(() => {}); return; }
+    try { navigator.vibrate && navigator.vibrate(ms); } catch {}
+  };
 
   /* Tirage sans répétition : on épuise le sac avant de le remélanger. */
   function bag(items) {
@@ -61,7 +69,9 @@
   }
 
   async function share(text) {
-    const url = location.origin + location.pathname;
+    const url = NATIVE ? PUBLIC_URL : location.origin + location.pathname;
+    const sh = plugin("Share");
+    if (sh) { try { await sh.share({ title: "Pétillante", text, url }); } catch {} return; }
     if (navigator.share) {
       try { await navigator.share({ title: "Pétillante", text, url }); return; }
       catch (e) { if (e.name === "AbortError") return; }
@@ -369,6 +379,13 @@
     const btn = $("#permit-save"); btn.disabled = true;
     try {
       const blob = await permitImage();
+      const fs = plugin("Filesystem"), sh = plugin("Share");
+      if (fs && sh) {
+        const data = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(String(fr.result).split(",")[1]); fr.readAsDataURL(blob); });
+        const { uri } = await fs.writeFile({ path: "permis-petillante.png", data, directory: "CACHE" });
+        try { await sh.share({ title: permit.titre, files: [uri] }); } catch {}
+        return;
+      }
       const file = new File([blob], "permis-petillante.png", { type: "image/png" });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try { await navigator.share({ files: [file], title: permit.titre }); return; }
@@ -514,7 +531,7 @@
     });
     $("#today-date").dataset.day = dayKey();
 
-    if ("serviceWorker" in navigator && location.protocol === "https:") {
+    if (!NATIVE && "serviceWorker" in navigator && location.protocol === "https:") {
       navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(() => {});
     }
   }
