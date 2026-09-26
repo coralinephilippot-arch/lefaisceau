@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">Pétillante</string>
-    <string name="title_activity_main">Pétillante</string>
-    <string name="package_name">org.lefaisceau.petillante</string>
-    <string name="custom_url_scheme">org.lefaisceau.petillante</string>
-</resources>
